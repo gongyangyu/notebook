@@ -1,0 +1,22 @@
+
+查询菜单结构
+pid1---------cid1
+      |
+      |
+      -------cid2-------ccid1
+      |        |
+      |        |
+      |        ---------ccid2
+      |
+      |
+      ---------cid3
+sql：      with ca as (select cat_name ,sys_connect_by_path(cname, '/')  as name from cat start with parentId is null connect by prior id=parentId )
+
+报错：  ORA-30004 :使用sys_connect_by_path 函数时,不能将分隔符作为列值的一部分
+
+原因：  是我们在使用 sys_connect_by_path(sln, '/')这个函数的时候，用什么分割，然而库里该字段恰好有数据带有'/'这符号，导致的，
+
+      解决办法
+           1 换分割符号
+           2 删除带有该符号的数据（不要在生产库上试验）
+           3 在源数据上替换掉你使用的分割符号
